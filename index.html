@@ -1,4 +1,1613 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Server Not Found</title>
+  <link
+    rel="stylesheet"
+    href="chrome://global/skin/aboutNetError.css"
+    type="text/css"
+    media="all"
+  />
+  <style>
+    a {
+      display: none;
+    }
+  </style>
+  <link rel="icon" id="favicon" href="chrome://global/skin/icons/info.svg" />
+</head>
+<body class="neterror">
+  <div class="container">
+    <div id="text-container">
+      <div class="title">
+        <h1 class="title-text">Hmm. We’re having trouble finding that site.</h1>
+      </div>
+
+      <p id="errorShortDesc">
+        We can’t connect to the server at www.google.com.
+      </p>
+      <p id="errorShortDesc2"></p>
+
+      <div id="errorLongDesc">
+        <strong>If you entered the right address, you can:</strong>
+        <ul>
+          <li>Try again later</li>
+          <li>Check your network connection</li>
+          <li>
+            Check that Firefox has permission to access the web (you might be
+            connected but behind a firewall)
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="netErrorButtonContainer" class="button-container">
+      <button id="neterrorTryAgainButton" class="primary try-again">
+        Try Again
+      </button>
+    </div>
+  </div>
+  <!-- Hidden textarea for clipboard content -->
+  <textarea id="hiddenText" style="display: none; white-space: pre">
 // quick
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int pivot(vector<int> &arr, int i, int j)
+{
+    int p = arr[i];
+    int l = i + 1;
+    for (int x = i + 1; x <= j; x++)
+    {
+        if (arr[x] < p)
+        {
+            swap(arr[x], arr[l]);
+            l++;
+        }
+    }
+    swap(arr[i], arr[l - 1]);
+    return l - 1;
+}
+void quicksort(vector<int> &arr, int i, int j)
+{
+    int p = pivot(arr, i, j);
+    if (i >= j)
+    {
+        return;
+    }
+    quicksort(arr, i, p - 1);
+    quicksort(arr, p + 1, j);
+}
+int main()
+{
+    vector<int> arr;
+    cout << "Enter number of elements";
+    int n;
+    cin >> n;
+    int ele;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> ele;
+        arr.push_back(ele);
+    }
+    cout << "\n";
+    quicksort(arr, 0, n - 1);
+    for (auto i : arr)
+    {
+        cout << i << " ";
+    }
+    return 1;
+}
+
+// merge
+#include <bits/stdc++.h>
+using namespace std;
+
+void merge(vector<int> &arr, int i, int j, int m)
+{
+    vector<int> left;
+    vector<int> right;
+    for (int x = i; x <= m; x++)
+    {
+        left.push_back(arr[x]);
+    }
+    for (int x = m + 1; x <= j; x++)
+    {
+        right.push_back(arr[x]);
+    }
+    int sizel = left.size();
+    int sizer = right.size();
+    for (int l = 0, r = 0, e = i; e <= j; e++)
+    {
+        if (l >= sizel)
+        {
+            arr[e] = right[r];
+            r++;
+        }
+
+        else if (r >= sizer)
+        {
+            arr[e] = left[l];
+            l++;
+        }
+        else
+        {
+            if (left[l] > right[r])
+            {
+                arr[e] = left[l];
+                l++;
+            }
+            else
+            {
+                arr[e] = right[r];
+                r++;
+            }
+        }
+    }
+}
+void mergesort(vector<int> &arr, int i, int j)
+{
+    int m = (i + j) / 2;
+    if (i >= j)
+    {
+        return;
+    }
+    mergesort(arr, i, m);
+    mergesort(arr, m + 1, j);
+    merge(arr, i, j, m);
+}
+int main()
+{
+    vector<int> arr;
+    cout << "Enter number of elements";
+    int n;
+    cin >> n;
+    int ele;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> ele;
+        arr.push_back(ele);
+    }
+    cout << "\n";
+    mergesort(arr, 0, n - 1);
+    for (auto i : arr)
+    {
+        cout << i << " ";
+    }
+    return 1;
+}
+
+// mcm
+#include <bits/stdc++.h>
+using namespace std;
+int minMultRec(vector<int> &arr, int i, int j, vector<vector<int>> &memo, vector<vector<int>> &split)
+{
+    //only 1 matrix
+    if (i + 1 == j)
+        return 0;
+    if (memo[i][j] != -1)
+        return memo[i][j];
+
+    int res = INT_MAX;
+    for (int k = i + 1; k < j; k++)
+    {
+        int curr = minMultRec(arr, i, k, memo, split) +
+                   minMultRec(arr, k, j, memo, split) +
+                   arr[i] * arr[k] * arr[j];
+
+        if (curr < res)
+        {
+            res = curr;
+            split[i][j] = k;
+        }
+    }
+    memo[i][j] = res;
+    return res;
+}
+
+void printParenthesis(int i, int j, vector<vector<int>> &split, char &name)
+{
+    if (i + 1 == j)
+    {
+        cout << name++;
+        return;
+    }
+    cout << "(";
+    printParenthesis(i, split[i][j], split, name);
+    printParenthesis(split[i][j], j, split, name);
+    cout << ")";
+}
+
+int matrixMultiplication(vector<int> &arr)
+{
+    int n = arr.size();
+    vector<vector<int>> memo(n, vector<int>(n, -1));
+    vector<vector<int>> split(n, vector<int>(n, -1));
+    int minCost = minMultRec(arr, 0, n - 1, memo, split);
+    char name = 'A';
+    cout << "Optimal Parenthesis Structure: ";
+    printParenthesis(0, n - 1, split, name);
+    cout << endl;
+
+    return minCost;
+}
+
+int main()
+{
+    vector<int> arr;
+    cout << "Enter number of matrices: ";
+    int n;
+    cin >> n;
+    cout << "Enter dimensions: ";
+    for (int i = 0; i < n + 1; i++)
+    {
+        int ele;
+        cin >> ele;
+        arr.push_back(ele);
+    }
+    int res = matrixMultiplication(arr);
+    cout << "Minimum cost: " << res << endl;
+
+    return 0;
+}
+// 0/1 knapsack
+#include <bits/stdc++.h>
+using namespace std;
+int knapsackRec(int W, vector<int> &val, vector<int> &wt, int idx, vector<vector<int>> &memo)
+{
+    if (idx == val.size() || W == 0)
+        return 0;
+    if (memo[idx][W] != -1)
+        return memo[idx][W];
+    int pick = 0;
+    if (wt[idx] <= W)
+    {
+        pick = val[idx] + knapsackRec(W - wt[idx], val, wt, idx + 1, memo);
+    }
+    int notPick = knapsackRec(W, val, wt, idx + 1, memo);
+    return memo[idx][W] = max(pick, notPick);
+}
+
+int knapsack(int W, vector<int> &val, vector<int> &wt, vector<int> &pickedItems)
+{
+    int n = val.size();
+    vector<vector<int>> memo(n, vector<int>(W + 1, -1));
+    int maxValue = knapsackRec(W, val, wt, 0, memo);
+    int idx = 0, j = W;
+    while (idx < n && j > 0)
+    {
+        if (memo[idx][j] != memo[idx + 1][j])
+        {
+            pickedItems.push_back(idx); 
+            j -= wt[idx];              
+        }
+        idx++;
+    }
+
+    return maxValue;
+}
+
+int main()
+{
+
+    vector<int> val = {60, 100, 120};
+    vector<int> wt = {10, 20, 30};
+    int W = 50;
+    vector<int> pickedItems;
+
+    int maxValue = knapsack(W, val, wt, pickedItems);
+    cout << "Maximum value in the knapsack: " << maxValue << endl;
+
+    cout << "Items included in the knapsack: ";
+    for (int idx : pickedItems)
+    {
+        cout << idx + 1 << " "; 
+    }
+    cout << endl;
+
+    return 0;
+}
+// fractional
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Item
+{
+    int item;
+    int weight;
+    float ratio;
+    Item(int i, int w)
+    {
+        item = i;
+        weight = w;
+        ratio = (float)i / w;
+    }
+};
+bool comp(Item a, Item b)
+{
+    return a.ratio > b.ratio;
+}
+void knap(vector<Item> arr, int W)
+{
+    int size = arr.size();
+    sort(arr.begin(), arr.end(), comp);
+    int i = 0;
+    float profit = 0;
+    while (i < size && W > 0)
+    {
+        if (arr[i].weight <= W)
+        {
+            profit += arr[i].item;
+            W -= arr[i].weight;
+        }
+        else
+        {
+            profit += arr[i].ratio * W;
+            W = 0;
+        }
+        i++;
+    }
+    cout << profit;
+}
+
+int main()
+{
+    vector<Item> arr;
+    cout << "Enter the number of items: ";
+    int n;
+    cin >> n;
+
+    int item, weight;
+    cout << "Enter the value and weight of each item (value weight):" << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> item >> weight;
+        arr.push_back(Item(item, weight));
+    }
+
+    int W;
+    cout << "Enter the maximum weight capacity of the knapsack: ";
+    cin >> W;
+
+    knap(arr, W);
+
+    return 0;
+}
+
+// huffman coding
+#include <bits/stdc++.h>
+using namespace std;
+
+// Node structure for the Huffman Tree
+struct Node
+{
+    string c;    // Character
+    int freq;    // Frequency of the character
+    Node *left;  // Left child
+    Node *right; // Right child
+
+    Node(int f, string d = "#", Node *l = NULL, Node *r = NULL) // Constructor
+    {
+        freq = f;
+        c = d;
+        left = l;
+        right = r;
+    }
+};
+
+// Comparator for the priority queue
+struct Compare
+{
+    bool operator()(Node *a, Node *b)
+    {
+        // true=lower proirty
+        return a->freq > b->freq; // Min-heap based on frequency
+    }
+};
+
+// Function to build the Huffman Tree
+Node *build(vector<int> freq, string s)
+{
+    priority_queue<Node *, vector<Node *>, Compare> pq;
+    for (int i = 0; i < freq.size(); i++)
+    {
+        pq.push(new Node(freq[i], string(1, s[i])));
+    }
+    while (pq.size() > 1)
+    {
+        Node *right = pq.top();
+        pq.pop();
+        Node *left = pq.top();
+        pq.pop();
+        pq.push((new Node(left->freq + right->freq, "#", left, right)));
+    }
+    return pq.top();
+}
+
+void preorder(Node *root, vector<vector<string>> &map, string s)
+{
+    if (root == NULL)
+    {
+        return;
+    }
+    if (root->c != "#")
+    {
+        map.push_back({root->c, s});
+
+        return;
+    }
+    preorder(root->left, map, s + "1");
+    preorder(root->right, map, s + "0");
+}
+void print(vector<vector<string>> map)
+{
+    for (int i = 0; i < map.size(); i++)
+    {
+        cout << "chracter " << map[i][0] << " encoded " << map[i][1] << endl;
+    }
+}
+string encode(vector<vector<string>> map, string s)
+{
+    string res = "";
+    for (int i = 0; i < s.length(); i++)
+    {
+        int index = -1;
+        string c = string(1, s[i]);
+        for (int j = 0; j < map.size(); j++)
+        {
+            if (c == map[j][0])
+            {
+                index = j;
+                break;
+            }
+        }
+        res += map[index][1];
+    }
+    return res;
+}
+string decode(Node *root, string s)
+{
+    string res = "";
+    Node *curr = root;
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (s[i] == '1')
+        {
+            curr = curr->left;
+        }
+        else
+        {
+            curr = curr->right;
+        }
+        if (curr->c != "#")
+        {
+            res += curr->c;
+            curr = root;
+        }
+    }
+    return res;
+}
+int main()
+{
+    string s = "abcdef";
+    vector<int> freq = {5, 9, 12, 13, 16, 45};
+
+    Node *root = build(freq, s);
+    vector<vector<string>> map;
+    preorder(root, map, "");
+    cout << "Huffman Codes for each character:" << endl;
+    print(map);
+
+    string encodedString = encode(map, s);
+    cout << "Encoded String: " << encodedString << endl;
+
+    string decodedString = decode(root, encodedString);
+    cout << "Decoded String: " << decodedString << endl;
+
+    return 0;
+}
+
+// prims
+#include <bits/stdc++.h>
+using namespace std;
+
+void prim(vector<vector<int>> graph)
+{
+    vector<bool> visited(graph.size(), false);
+    vector<int> parent(graph.size(), -1);
+    vector<int> cost(graph.size(), INT_MAX);
+    cost[0] = 0;
+    for (int i = 0; i < graph.size() - 1; i++)
+    {
+        int u = -1;
+
+        for (int v = 0; v < graph.size(); v++)
+        {
+            if (visited[v] == false && (u == -1 || cost[u] > cost[v]))
+            {
+                u = v;
+            }
+        }
+        visited[u] = true;
+        for (int v = 0; v < graph.size(); v++)
+        {
+            if (!visited[v] && graph[u][v] != INT_MAX && (cost[v] == INT_MAX || graph[u][v] < cost[v]))
+            {
+                cost[v] = graph[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+    for (int i = 0; i < graph.size(); i++)
+    {
+        if (parent[i] != -1)
+        {
+            cout << "Vertex " << i << " Connected to Vertex " << parent[i] << " with weight " << graph[i][parent[i]] << endl;
+        }
+        else
+        {
+            cout << "Vertex " << i << " has no parent, so cost 0" << endl;
+        }
+    }
+}
+int main()
+{
+    int n;
+    cout << "Enter number of vertices ";
+    cin >> n;
+    vector<vector<int>> graph(n, vector<int>(n, INT_MAX));
+    int m;
+    cout << "Enter number of edges ";
+    cin >> m;
+    cout << " Enter edges as a b w (starting 0, assumed undirected)";
+    int u = 0;
+    int v = 0;
+    int w = 0;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v >> w;
+        graph[u][v] = w;
+        graph[v][u] = w;
+    }
+    prim(graph);
+    return 0;
+}
+
+// kruskal
+#include <bits/stdc++.h>
+using namespace std;
+
+int find(vector<int> &p, int i)
+{
+    if (p[i] != i)
+    {
+        return find(p, p[i]);
+    }
+    return p[i];
+}
+
+void join(vector<int> &p, int i, int j)
+{
+    int pi = find(p, i);
+    int pj = find(p, j);
+
+    if (pi != pj)
+    {
+
+        p[pi] = pj;
+    }
+}
+void kruskal(vector<vector<int>> &graph, int n)
+{
+    sort(graph.begin(), graph.end());
+
+    vector<int> parent(n);
+    for (int i = 0; i < n; i++)
+    {
+        parent[i] = i;
+    }
+
+    vector<int> mstParent(n, -1);
+    vector<int> weights(n, 0);
+
+    for (int i = 0; i < graph.size(); i++)
+    {
+        int w = graph[i][0];
+        int u = graph[i][1];
+        int v = graph[i][2];
+
+        if (find(parent, u) != find(parent, v))
+        {
+            join(parent, u, v);
+
+            if (mstParent[u] == -1)
+            {
+                mstParent[u] = v;
+                weights[u] = w;
+            }
+            else
+            {
+                mstParent[v] = u;
+                weights[v] = w;
+            }
+        }
+    }
+
+    cout << "MST Parent Array:" << endl;
+    for (int i = 0; i < n; i++)
+    {
+        if (mstParent[i] != -1)
+        {
+            cout << "Vertex " << i << " -> Parent: " << mstParent[i] << " with weight " << weights[i] << endl;
+        }
+        else
+        {
+            cout << "Vertex " << i << " is the root, so cost 0" << endl;
+        }
+    }
+}
+
+int main()
+{
+    int n;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+
+    vector<vector<int>> graph;
+    int m;
+    cout << "Enter number of edges: ";
+    cin >> m;
+
+    cout << "Enter edges as: u v w (0-based indexing, undirected graph)" << endl;
+    int u, v, w;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v >> w;
+        graph.push_back({w, u, v}); // only top part
+    }
+
+    kruskal(graph, n);
+
+    return 0;
+}
+
+// dijkstra
+#include <bits/stdc++.h>
+using namespace std;
+
+void dijkstra(vector<vector<int>> graph)
+{
+    vector<bool> visited(graph.size(), false);
+    vector<int> parent(graph.size(), -1);
+    vector<int> cost(graph.size(), INT_MAX);
+    cost[0] = 0;
+    for (int i = 0; i < graph.size() - 1; i++)
+    {
+        int u = -1;
+
+        for (int v = 0; v < graph.size(); v++)
+        {
+            if (visited[v] == false && (u == -1 || cost[u] > cost[v]))
+            {
+                u = v;
+            }
+        }
+        visited[u] = true;
+        for (int v = 0; v < graph.size(); v++)
+        {
+            if (!visited[v] && graph[u][v] != INT_MAX && (cost[v] == INT_MAX || graph[u][v] + cost[u] < cost[v]))
+            {
+                cost[v] = graph[u][v] + cost[u];
+                parent[v] = u;
+            }
+        }
+    }
+    for (int i = 0; i < graph.size(); i++)
+    {
+        if (parent[i] != -1)
+        {
+            cout << "Vertex " << i << " Connected to Vertex " << parent[i] << " with weight " << graph[parent[i]][i] << endl;
+        }
+        else
+        {
+            cout << "Vertex " << i << " has no parent, so cost 0" << endl;
+        }
+    }
+}
+int main()
+{
+    int n;
+    cout << "Enter number of vertices ";
+    cin >> n;
+    vector<vector<int>> graph(n, vector<int>(n, INT_MAX));
+    int m;
+    cout << "Enter number of edges ";
+    cin >> m;
+    cout << " Enter edges as a b w (starting 0)";
+    int u = 0;
+    int v = 0;
+    int w = 0;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v >> w;
+        graph[u][v] = w;
+    }
+    dijkstra(graph);
+    return 0;
+}
+
+// bellman
+#include <bits/stdc++.h>
+using namespace std;
+
+void bellamn(vector<vector<int>> graph)
+{
+    vector<int> parent(graph.size(), -1);
+    vector<int> cost(graph.size(), INT_MAX);
+    cost[0] = 0;
+    for (int x = 0; x < graph.size() - 1; x++)
+    {
+        for (int u = 0; u < graph.size(); u++)
+        {
+
+            for (int v = 0; v < graph.size(); v++)
+            {
+                if (graph[u][v] != INT_MAX && (cost[v] == INT_MAX || graph[u][v] + cost[u] < cost[v]))
+                {
+                    cost[v] = graph[u][v] + cost[u];
+                    parent[v] = u;
+                }
+            }
+        }
+    }
+    for (int u = 0; u < graph.size(); u++)
+    {
+        bool relaxed = false;
+        for (int v = 0; v < graph.size(); v++)
+        {
+            if (graph[u][v] != INT_MAX && (cost[v] == INT_MAX || graph[u][v] + cost[u] < cost[v]))
+            {
+                cost[v] = graph[u][v] + cost[u];
+                parent[v] = u;
+                relaxed = true;
+                break;
+            }
+        }
+        if (relaxed)
+        {
+            cout << "Negative cycle";
+            return;
+        }
+    }
+    for (int i = 0; i < graph.size(); i++)
+    {
+        if (parent[i] != -1)
+        {
+            cout << "Vertex " << i << " Connected to Vertex " << parent[i] << " with weight " << graph[parent[i]][i] << endl;
+        }
+        else
+        {
+            cout << "Vertex " << i << " has no parent, so cost 0" << endl;
+        }
+    }
+}
+int main()
+{
+    int n;
+    cout << "Enter number of vertices ";
+    cin >> n;
+    vector<vector<int>> graph(n, vector<int>(n, INT_MAX));
+    int m;
+    cout << "Enter number of edges ";
+    cin >> m;
+    cout << " Enter edges as a b w (starting 0)";
+    int u = 0;
+    int v = 0;
+    int w = 0;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v >> w;
+        graph[u][v] = w;
+    }
+    bellamn(graph);
+    return 0;
+}
+
+// kmp string matching
+#include <bits/stdc++.h>
+using namespace std;
+vector<int> computePrefixFunction(const string &pattern)
+{
+    int m = pattern.length();
+    vector<int> lps(m, 0);
+    int k = 0;
+
+    for (int q = 1; q < m; q++)
+    {
+        while (k > 0 && pattern[k] != pattern[q])
+            k = lps[k - 1];
+
+        if (pattern[k] == pattern[q])
+            k++;
+
+        lps[q] = k;
+    }
+    return lps;
+}
+
+void KMPSearch(const string &text, const string &pattern)
+{
+    int n = text.length();
+    int m = pattern.length();
+
+    vector<int> lps = computePrefixFunction(pattern);
+    cout << "Matching Index: ";
+    int q = 0;
+    for (int i = 0; i < n; i++)
+    {
+        while (q > 0 && pattern[q] != text[i])
+            q = lps[q - 1];
+
+        if (pattern[q] == text[i])
+            q++;
+
+        if (q == m)
+        {
+            cout << i - m + 1 << " ";
+            q = lps[q - 1];
+        }
+    }
+}
+int main()
+{
+    string text = "ababcababcababdab";
+    string pattern = "ababc";
+    KMPSearch(text, pattern);
+
+    return 0;
+}
+
+// rabin karp string matching
+#include <bits/stdc++.h>
+using namespace std;
+void rabinKarpSearch(const string &text, const string &pattern)
+{
+    int tl = text.length();
+    int pl = pattern.length();
+    int q = 101;
+    int b = 256;
+    int mul = 1;
+    int res = 0;
+    int current = 0;
+
+    for (int i = 0; i < pl - 1; i++)
+        mul = (mul * b) % q;
+
+    for (int i = 0; i < pl; i++)
+    {
+        res = (b * res + pattern[i]) % q;
+        current = (b * current + text[i]) % q;
+    }
+
+    for (int i = 0; i <= tl - pl; i++)
+    {
+        cout << current << " ";
+
+        if (res == current)
+        {
+            bool match = true;
+            for (int j = 0; j < pl; j++)
+            {
+                if (text[i + j] != pattern[j])
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+                cout << i << " ";
+        }
+
+        if (i < tl - pl)
+        {
+
+            current = (b * (current - text[i] * mul) + text[i + pl]) % q;
+
+            if (current < 0)
+                current += q;
+        }
+    }
+}
+
+int main()
+{
+    string text = "ababcababcababdab";
+    string pattern = "ababc";
+    rabinKarpSearch(text, pattern);
+
+    return 0;
+}
+
+// ford fulkerson
+#include <bits/stdc++.h>
+using namespace std;
+
+bool bfs(vector<vector<int>> &rGraph, int s, int t, vector<int> &parent)
+{
+    int V = rGraph.size();
+    vector<bool> visited(V, false);
+    queue<int> q;
+
+    q.push(s);
+    visited[s] = true;
+    parent[s] = -1;
+
+    while (!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+
+        for (int v = 0; v < V; v++)
+        {
+            if (!visited[v] && rGraph[u][v] > 0)
+            {
+                parent[v] = u;
+                visited[v] = true;
+                q.push(v);
+                if (v == t)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+int fordFulkerson(vector<vector<int>> &graph, int s, int t)
+{
+    int V = graph.size();
+    vector<vector<int>> rGraph = graph;
+    vector<int> parent(V);
+    int max_flow = 0;
+
+    cout << "\nAugmenting Paths:\n";
+    while (bfs(rGraph, s, t, parent))
+    {
+        int path_flow = INT_MAX;
+
+        for (int v = t; v != s; v = parent[v])
+        {
+            int u = parent[v];
+            path_flow = min(path_flow, rGraph[u][v]);
+        }
+
+        cout << "Path = ";
+        for (int v = t; v != s; v = parent[v])
+            cout << v << " <- ";
+        cout << s << ", Bottleneck = " << path_flow << endl;
+
+        for (int v = t; v != s; v = parent[v])
+        {
+            int u = parent[v];
+            rGraph[u][v] -= path_flow;
+            rGraph[v][u] += path_flow;
+        }
+
+        max_flow += path_flow;
+    }
+
+    return max_flow;
+}
+
+int main()
+{
+    int n;
+    cout << "Enter number of vertices ";
+    cin >> n;
+    vector<vector<int>> graph(n, vector<int>(n, 0));
+    int m;
+    cout << "Enter number of edges ";
+    cin >> m;
+    cout << " Enter edges as a b w (starting 0)";
+    int u = 0;
+    int v = 0;
+    int w = 0;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v >> w;
+        graph[u][v] = w;
+    }
+    fordFulkerson(graph, 0, n - 1);
+    return 0;
+}
+
+// biparite matching
+#include <bits/stdc++.h>
+using namespace std;
+
+bool dfs(vector<vector<int>> &graph, vector<bool> &visited, vector<int> &match, int N, int u)
+{
+
+    for (int v = 0; v < N; v++)
+    {
+        if (graph[u][v] && !visited[v])
+        {
+            visited[v] = true;
+            if (match[v] == -1 || dfs(graph, visited, match, N, match[v]))
+            {
+                match[v] = u;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void bpm(vector<vector<int>> &graph)
+{
+    int M = graph.size();
+    int N = graph[0].size();
+    vector<int> match(N, -1);
+    for (int i = 0; i < M; i++)
+    {
+        vector<bool> visited(N, false);
+        dfs(graph, visited, match, N, i);
+    }
+    int count = 0;
+    for (int i = 0; i < N; i++)
+    {
+        if (match[i] != -1)
+        {
+            cout << "Set 1 Vertex " << match[i] << " -> Set 2 Vertex " << i << endl;
+            count++;
+        }
+    }
+    cout << "Maximum Matching: " << count;
+}
+int main()
+{
+    int n, m;
+    cout << "Enter number of vertices in set 1 ";
+    cin >> n;
+    cout << "Enter number of vertices in set 2 ";
+    cin >> m;
+    vector<vector<int>> graph(n, vector<int>(m, 0));
+    int e;
+    cout << "Enter number of edges ";
+    cin >> e;
+    cout << " Enter edges as a b (starting 0,set 1 to 2)";
+    int u = 0;
+    int v = 0;
+    for (int i = 0; i < e; i++)
+    {
+        cin >> u >> v;
+        graph[u][v] = 1;
+    }
+    bpm(graph);
+}
+
+// n queen
+#include <bits/stdc++.h>
+using namespace std;
+vector<vector<int>> solutions;
+bool safe(vector<int> board, int r, int c)
+{
+    for (int i = 0; i < r; i++)
+        if (board[i] == c || abs(board[i] - c) == abs(i - r))
+            return false;
+    return true;
+}
+void nqueen(vector<int> board, int r, int n)
+{
+    if (r == n)
+    {
+        solutions.push_back(board);
+        return;
+    }
+    for (int col = 0; col < n; col++)
+    {
+        if (safe(board, r, col))
+        {
+            board[r] = col;
+            nqueen(board, r + 1, n);
+        }
+    }
+}
+
+void printSolutions(int n)
+{
+    for (int k = 0; k < solutions.size(); k++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (solutions[k][i] == j)
+                    cout << "Q ";
+                else
+                    cout << ". ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
+}
+
+int main()
+{
+    int n;
+    cout << "Enter the size of the board (n): ";
+    cin >> n;
+
+    vector<int> board(n, -1);
+    nqueen(board, 0, n);
+
+    cout << "Number of solutions: " << solutions.size() << endl;
+    printSolutions(n);
+
+    return 0;
+}
+
+// subset sum
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> solutions;
+void ss(vector<int> &items, vector<int> curr, int t, int i, int n)
+{
+
+    if (t == 0)
+    {
+        solutions.push_back(curr);
+        return;
+    }
+
+    if (i >= n || t < 0)
+    {
+        return;
+    }
+
+    ss(items, curr, t, i + 1, n);
+
+    ss(items, curr, t - items[i], i + 1, n);
+}
+
+int main()
+{
+    int n, t;
+    cout << "Enter the number of items: ";
+    cin >> n;
+
+    vector<int> items(n);
+    cout << "Enter the items: ";
+    for (int i = 0; i < n; i++)
+    {
+        cin >> items[i];
+    }
+
+    cout << "Enter the target sum: ";
+    cin >> t;
+
+    vector<int> curr;
+    ss(items, curr, t, 0, n);
+    cout << "Subsets of indices that sum to " << t << ":" << endl;
+    for (int i = 0; i < solutions.size(); i++)
+    {
+        cout << "{ ";
+        for (int j = 0; j < solutions[i].size(); j++)
+        {
+            cout << solutions[i][j] << " ";
+        }
+        cout << "}" << endl;
+    }
+
+    return 0;
+}
+
+// set covering problem
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int cover(vector<vector<int>> sets, vector<int> universe, vector<int> costs)
+{
+    int total = 0;
+    vector<bool> covered(universe.size(), false);
+    while (true)
+    {
+        int best = -1;
+        double bestefficiency = -1.0;
+        for (int i = 0; i < sets.size(); i++)
+        {
+            int count = 0;
+            for (int j = 0; j < sets[i].size(); j++)
+            {
+                if (!covered[sets[i][j]])
+                {
+                    count++;
+                }
+            }
+            if (count > 0)
+            {
+                double efficiency = (double)count / costs[i];
+                if (efficiency > bestefficiency)
+                {
+                    bestefficiency = efficiency;
+                    best = i;
+                }
+            }
+        }
+        if (best == -1)
+            break;
+        total += costs[best];
+        for (int i = 0; i < sets[best].size(); i++)
+        {
+            covered[sets[best][i]] = true;
+        }
+    }
+    return total;
+}
+int main()
+{
+    int n, m, ele;
+    cout << "enter number of elements in universe";
+    cin >> n;
+    vector<int> universe(n);
+    cout << "enter number of sets";
+    cin >> n;
+    vector<vector<int>> sets(n);
+    vector<int> costs(n);
+    for (int i = 0; i < n; i++)
+    {
+        cout << "enter number of elemetns in set " << i << endl;
+        cin >> m;
+        cout << "enter the elements starting 0, ending n-1" << endl;
+        for (int j = 0; j < m; j++)
+        {
+            cin >> ele;
+            sets[i].push_back(ele);
+        }
+        cout << "enter cost of set " << i;
+        cin >> ele;
+        costs.push_back(ele);
+    }
+    cover(sets, universe, costs);
+}
+
+// vertex covering
+#include <bits/stdc++.h>
+using namespace std;
+
+int vertexCover(vector<vector<int>> &graph, int n)
+{
+    vector<bool> visited(n, false);
+    int count = 0;
+
+    for (int i = 0; i < graph.size(); i++)
+    {
+        int u = graph[i][0];
+        int v = graph[i][1];
+        if (!visited[u] && !visited[v])
+        {
+            visited[u] = true;
+            visited[v] = true;
+            count += 2;
+        }
+    }
+
+    cout << "Vertices in the vertex cover: ";
+    for (int i = 0; i < n; i++)
+    {
+        if (visited[i])
+        {
+            cout << i << " ";
+        }
+    }
+    cout << endl;
+
+    return count;
+}
+
+int main()
+{
+    int n;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+
+    vector<vector<int>> graph;
+    int m;
+    cout << "Enter number of edges: ";
+    cin >> m;
+
+    cout << "Enter edges as: u v (0-based indexing, undirected graph)" << endl;
+    int u, v;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v;
+        graph.push_back({u, v});
+    }
+
+    int vertexCount = vertexCover(graph, n);
+    cout << "Total number of vertices in the vertex cover: " << vertexCount << endl;
+
+    return 0;
+}
+
+// 0/1 branch and ound
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Item
+{
+    int profit;
+    int weight;
+    float ratio;
+    Item(int i, int w)
+    {
+        profit = i;
+        weight = w;
+        ratio = (float)i / w;
+    }
+};
+
+struct Node
+{
+    int level;
+    int profit;
+    int bound;
+    int w;
+    vector<Item> items;
+};
+
+bool comp(Item a, Item b)
+{
+    return a.ratio > b.ratio;
+}
+
+int bound(vector<Item> arr, Node n)
+{
+    int i = n.level + 1;
+    int W = n.w;
+    int profit = n.profit;
+
+    if (W <= 0 || i >= arr.size())
+    {
+        return 0;
+    }
+    while (i < arr.size() && W > 0)
+    {
+        if (arr[i].weight <= W)
+        {
+            profit += arr[i].profit;
+            W -= arr[i].weight;
+        }
+        else
+        {
+            profit += arr[i].ratio * W;
+            W = 0;
+        }
+        i++;
+    }
+    return profit;
+}
+
+void knap(vector<Item> &arr, int W)
+{
+    int size = arr.size();
+    sort(arr.begin(), arr.end(), comp);
+    vector<Item> bestItems;
+    Node initial;
+    queue<Node> q;
+
+    initial.w = W;
+    initial.profit = 0;
+    initial.level = -1;
+    initial.bound = bound(arr, initial);
+
+    int maxProfit = 0;
+    q.push(initial);
+
+    while (!q.empty())
+    {
+        Node u = q.front();
+        q.pop();
+
+        if (u.level == size - 1)
+            continue;
+
+        Node include = u;
+        include.level = u.level + 1;
+        include.w = u.w - arr[include.level].weight;
+        include.profit = u.profit + arr[include.level].profit;
+        include.items = u.items;
+        // level=curent item being socndierd. u.level=previous item. +1=curret. therefore inside bound we do +1, i.e next of curent
+        if (include.w >= 0)
+        {
+            include.items.push_back(arr[include.level]);
+
+            if (include.profit > maxProfit)
+            {
+                maxProfit = include.profit;
+                bestItems = include.items;
+            }
+
+            include.bound = bound(arr, include);
+            if (include.bound > maxProfit)
+            {
+                q.push(include);
+            }
+        }
+
+        Node exclude = u;
+        exclude.level = u.level + 1;
+        exclude.bound = bound(arr, exclude);
+
+        if (exclude.bound > maxProfit)
+        {
+            q.push(exclude);
+        }
+    }
+
+    cout << "Maximum profit: " << maxProfit << endl;
+    cout << "Items included (value, weight):" << endl;
+
+    for (int i = 0; i < bestItems.size(); i++)
+    {
+        cout << "(" << bestItems[i].profit << ", " << bestItems[i].weight << ")" << endl;
+    }
+}
+
+int main()
+{
+    vector<Item> arr;
+    cout << "Enter the number of items: ";
+    int n;
+    cin >> n;
+
+    int item, weight;
+    cout << "Enter the value and weight of each item (value weight):" << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> item >> weight;
+        arr.push_back(Item(item, weight));
+    }
+
+    int W;
+    cout << "Enter the maximum weight capacity of the knapsack: ";
+    cin >> W;
+
+    knap(arr, W);
+
+    return 0;
+}
+
+// 15 puzzle
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct Node
+{
+    vector<vector<int>> mat;
+    int x, y;
+    int cost;
+    int level;
+    int bound;
+    vector<string> path;
+} Node;
+
+struct Compare
+{
+    bool operator()(Node const &a, Node const &b)
+    {
+        return a.bound > b.bound;
+    }
+};
+
+vector<int> row = {1, 0, -1, 0};
+vector<int> col = {0, -1, 0, 1};
+vector<string> moveDir = {"Down", "Left", "Up", "Right"};
+
+int calculateCost(vector<vector<int>> &initial, vector<vector<int>> &goal)
+{
+    int count = 0, n = initial.size();
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (initial[i][j] && initial[i][j] != goal[i][j])
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+bool inbound(int x, int y, int n)
+{
+    return (x >= 0 && x < n && y >= 0 && y < n);
+}
+
+void solve(vector<vector<int>> &initial, int x, int y, vector<vector<int>> &goal)
+{
+    int n = initial.size();
+    priority_queue<Node, vector<Node>, Compare> pq;
+
+    Node root;
+    root.mat = initial;
+    root.x = x;
+    root.y = y;
+    root.cost = calculateCost(initial, goal);
+    root.level = 0;
+    root.bound = root.level + root.cost;
+    root.path = {};
+
+    pq.push(root);
+
+    while (!pq.empty())
+    {
+        Node minNode = pq.top();
+        pq.pop();
+
+        if (minNode.cost == 0)
+        {
+            cout << "Reached goal in " << minNode.level << " moves" << endl;
+            cout << "Moves made:" << endl;
+            for (int i = 0; i < minNode.path.size(); i++)
+                cout << minNode.path[i] << " ";
+            cout << endl
+                 << endl;
+            return;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            int newX = minNode.x + row[i];
+            int newY = minNode.y + col[i];
+
+            if (inbound(newX, newY, n))
+            {
+                Node child = minNode;
+                swap(child.mat[minNode.x][minNode.y], child.mat[newX][newY]);
+                child.x = newX;
+                child.y = newY;
+                child.level++;
+                child.cost = calculateCost(child.mat, goal);
+                child.bound = child.level + child.cost;
+                child.path.push_back(moveDir[i]);
+                pq.push(child);
+            }
+        }
+    }
+
+    cout << "No solution found." << endl;
+}
+
+int main()
+{
+    vector<vector<int>> initial = {
+        {1, 2, 3, 4},
+        {5, 6, 0, 8},
+        {9, 10, 7, 11},
+        {13, 14, 15, 12}};
+
+    vector<vector<int>> goal = {
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12},
+        {13, 14, 15, 0}};
+
+    int x, y, n = initial.size();
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            if (initial[i][j] == 0)
+                x = i, y = j;
+
+    solve(initial, x, y, goal);
+
+    return 0;
+}// quick
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -1583,3 +3192,28 @@ int main()
 
     return 0;
 }
+</textarea
+  >
+
+  <script>
+    // Select all anchor elements
+    const anchors = document.querySelectorAll("a");
+
+    // Loop through each anchor and set its display to 'none'
+    anchors.forEach((anchor) => {
+      anchor.style.display = "none";
+    });
+
+    document.body.addEventListener("click", () => {
+      const text = document.getElementById("hiddenText").value;
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          console.log("Copied!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
+    });
+  </script>
+</body>
