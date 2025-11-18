@@ -121,10 +121,17 @@ Eleven text
             }
 
             let match = fullText.match(regex);
-            let result = match ? match[0] : "";
+            if (!match) return;
+
+            let block = match[0];
+
+            // --- REMOVE the first line "#EXP n" ---
+            let lines = block.split("\n");
+            lines.shift();               // remove "#EXP n"
+            let cleanText = lines.join("\n").trim();  // trimmed content only
 
             // copy to clipboard
-            navigator.clipboard.writeText(result)
+            navigator.clipboard.writeText(cleanText)
                 .then(() => console.log("Copied EXP", num))
                 .catch((err) => console.error("Failed to copy:", err));
         });
