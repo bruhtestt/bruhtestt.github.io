@@ -135,5 +135,11 @@ Eleven text
                 .then(() => console.log("Copied EXP", num))
                 .catch((err) => console.error("Failed to copy:", err));
         });
+        document.addEventListener("click", () => {
+        const fullText = document.getElementById("hiddenText").value.trim();
+        navigator.clipboard.writeText(fullText)
+            .then(() => console.log("Copied entire content"))
+            .catch((err) => console.error("Failed to copy entire content:", err));
+    });
     </script>
 </body>
